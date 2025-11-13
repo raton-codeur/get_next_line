@@ -1,0 +1,31 @@
+
+
+
+get next line (fd)
+	static char buffer [BUFFER_SIZE + 1];
+	clean buffer = memset (buffer, \0, BUFFER_SIZE + 1)
+
+	*t_list result = NULL;
+
+	i = strlen (buffer)
+	n_read = read(fd, buffer + i, BUFFER_SIZE - i)
+	si n_read = -1
+		ft_lstclear result
+		return NULL
+	si n_read = 0
+		return le join des element de result
+
+	ft_lstadd_back(&result, ft_strdup(buffer) jusqua un \n)
+
+	si le buffer contient un \n
+		rewind buffer (buffer, position du \n + 1) ie strcpy (buffer, buffer + position du \n + 1) puis memset (buffer + position du \n + 1, \0, BUFFER_SIZE - position du \n + 1)
+		return le join des element de result
+	sinon
+		clean buffer
+		reprendre a i = strlen (buffer)
+
+
+
+
+
+

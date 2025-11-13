@@ -1,0 +1,155 @@
+char* get_next_line(int fd)
+	static char *buffer
+
+	si fd < 0 ou BUFFER_SIZE <= 0
+		return null
+	si mise a jour de buffer (pointeur sur buffer, fd)
+		return null
+	result = get ligne (buffer)
+	mise a jour de buffer 2 (buffer)
+	return result
+
+mise a jour de buffer (pointeur sur buffer, fd) -> 0 si ok 1 si erreur
+	a ajouter au buffer = calloc(buffer size + 1, char)
+	si a ajouter au buffer est null
+		return double free (buffer, a ajouter au buffer)
+	nombre de caractères lus = 1
+	while (nombre de caractères lus > 0 et ! buffer est complet (pointeur sur buffer))
+		nombre de caractères lus = read(fd, a ajouter au buffer, BUFFER_SIZE)
+		if (nombre de caractères lus == -1)
+			return double free (buffer, a ajouter au buffer)
+		a ajouter au buffer[nombre de caractères lus] = \0
+		si join dans buffer de buffer et a ajouter au buffer (pointeur sur buffer, a ajouter au buffer)
+			return 1
+	free (a ajouter au buffer)
+	return 0
+
+buffer est complet (pointeur sur buffer) -> 1 si buffer complet, 0 sinon
+	si pointeur null
+		return 0
+	i = 0
+	tant que (buffer[i])
+		si buffer[i] est \n
+			return 1
+			i++
+	return 0
+
+double free (buffer, a ajouter au buffer)
+	free buffer
+	free a ajouter au buffer
+	return 1
+
+join dans buffer de buffer et a ajouter au buffer (pointeur sur buffer, a ajouter au buffer) -> 0 si ok 1 sinon
+	si buffer null et a ajouter au buffer vide
+		return double free (buffer, a ajouter au buffer)
+	si buffer null
+		buffer = a ajouter au buffer
+		return 0
+	nouveau buffer = calloc (len buffer + len a ajouter au buffer + 1, size of char)
+	si nouveau buffer == null
+		return double free (buffer, a ajouter au buffer)
+	i = 0
+	tant que (buffer[i])
+		nouveau buffer [i] = buffer[i]
+		i++
+	free buffer
+	len buffer = i
+	tant que (a ajouter au buffer [i - len buffer])
+		nouveau buffer[i] = a ajouter au buffer [i - len buffer]
+		i++
+	nouveau buffer [i] = \0
+	buffer = nouveau buffer
+	return 0
+
+get ligne (buffer) -> nouvelle ligne malloc
+	si le buffer est vide
+		return null
+	i = 0
+	tant que (buffer[i] et buffer[i] n'est pas \n)
+		i++
+	result = calloc(i + 2, char)
+	si result null
+		return null
+	i = 0
+	tant que (buffer[i] et buffer[i] n'est pas \n)
+		result[i] = buffer[i]
+		i++
+	si (buffer[i] == \n)
+		result[i] = \n
+	return result
+
+mise a jour de buffer 2 ( buffer) -> void
+	i = 0
+	tant que (buffer[i] et buffer[i] != \n)
+		i++
+	si buffer[i] == \0
+		free buffer
+		return
+	i++
+	i_start = i;
+	tant que buffer[i]
+		buffer[i - i_start] = buffer[i]
+		i++
+	buffer[i - i_start] = \0
+
+
+
+
+substr (buffer, i start, i stop) -> dup de s de i start inclus à i stop exclu
+	result = calloc (i_stop - i start, char)
+	i = i start
+	tant que (i < i stop)
+		result[i - i start] = s[i]
+		i++
+	result[i - i start] = \0
+
+
+trouve \n (buffer)
+	i = 0
+	tant que (buffer [i])
+		si buffer [i] = \n
+			return i
+		i ++
+	return i - 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+join (char *a, char *b) -> join de a et b dans une nouvelle string allouée + free a + free b
+	si a est null
+		return b
+	char * result = calloc(len de a + len de b + 1, char)
+	i = 0
+	tant que (a[i])
+		result[i] = a[i]
+		i++
+	free a
+	len a = i
+	tant que (b[i - len a])
+		result[i] = b[i - len a]
+		i++
+	free(b)
+	result[i - len a] = \0
+	return result
+
+
+
+
+
+buffer null ou qsdlmfkjsdlfjkh \0
+a ajouter au buffer a b c \n d \0
+
+
+

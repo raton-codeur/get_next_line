@@ -1,0 +1,35 @@
+get next line
+	BUFFER_SIZE = 4
+	buffer = \0 \0 \0 \0
+	i_stop = BUFFER_SIZE : où on doit s'arreter de lire le buffer
+	result = NULL
+	stop = 0 : ecq on doit arreter de boucler
+
+	tant que stop == 0
+		i_start = indice du premier \0 dans le buffer
+		update buffer(buffer, fd, i_start, &stop, &i_stop) ie read dans le buffer a partir de i_start
+			-> buffer a b c d
+			si le nombre de car lus n'est pas BUFFER_SIZE - i_start
+				stop = 1
+				i_stop = nombre de car lus
+			si on a lu -1 -> erreur -> free result et return null
+			si on a lu un \n -> stop = 1 et i_stop juste apres \n
+
+		update result : join entre result et buffer jusqu'a i stop
+		rewind buffer (buffer, i_stop)
+
+	return result
+
+
+f a b \n c d
+buffer \0 \0 \0 \0 \0
+i stop = 5
+result null
+stop 0
+
+istart 0
+update buffer -> a b \n c d
+stop 1
+i stop 3
+update result -> a b \n
+rewind -> c d \0 c d

@@ -1,0 +1,102 @@
+char* get_next_line(int fd)
+	static char *buffer
+
+	si fd < 0 ou BUFFER_SIZE <= 0
+		return null
+	si [ buffer est null et init buffer(pointeur sur buffer) ] ou si mise a jour de buffer (pointeur sur buffer, fd)
+		free buffer
+		return null
+	result = get ligne (buffer)
+	mise a jour de buffer 2 (buffer)
+	return result
+
+init buffer (pointeur sur buffer) -> 1 si erreur, 0 sinon
+	buffer = malloc (sizeof char * 1)
+	si buffer est null
+		return 1
+	buffer[0] = \0
+	return 0
+
+mise a jour de buffer (pointeur sur buffer, fd) -> 0 si ok 1 si erreur
+	char*	a ajouter au buffer[buffer size + 1]
+
+	init chaine (a ajouter au buffer, buffer size + 1)
+	nombre de caractères lus = read(fd, a ajouter au buffer, BUFFER_SIZE)
+	while (nombre de caractères lus > 0 et ! buffer a \n (buffer))
+		si join dans buffer de buffer et a ajouter au buffer (pointeur sur buffer, a ajouter au buffer)
+			return 1
+		nombre de caractères lus = read(fd, a ajouter au buffer, BUFFER_SIZE)
+		si nombre de caractères lus != -1
+			a ajouter au buffer[nombre de caractères lus] = \0
+	si nombre de caractères lus == -1 ou si [ [nombre de caractères lus = 0 et [buffer vide ie len chaine (buffer) == 0]] ie fin du fichier ]
+		return 1
+	return 0
+
+init chaine (a ajouter au buffer, buffer size + 1)
+	i = 0
+	tant que (i < buffer size + 1)
+		a ajouter au buffer[i++] = \0
+
+buffer a \n (buffer) -> 1 si buffer a \n, 0 sinon
+	i = 0
+	tant que (buffer[i])
+		si buffer[i] est \n
+			return 1
+		i++
+	return 0
+
+join dans buffer de buffer et a ajouter au buffer (pointeur sur buffer, a ajouter au buffer) -> 0 si ok 1 sinon
+	nouveau buffer = malloc ((len chaine (buffer) + len chaine (a ajouter au buffer) + 1) * sizeof char)
+	si nouveau buffer == null
+		return 1
+	i = 0
+	tant que (buffer[i])
+		nouveau buffer [i] = buffer[i]
+		i++
+	free buffer
+	len buffer = i
+	tant que (a ajouter au buffer [i - len buffer])
+		nouveau buffer[i] = a ajouter au buffer [i - len buffer]
+		i++
+	nouveau buffer [i] = \0
+	buffer = nouveau buffer
+	return 0
+
+len chaine (char* s) -> longueur de s
+	i = 0
+	tant que s[i]
+		i++
+	return i
+
+get ligne (buffer) -> nouvelle ligne malloc
+	i = 0
+	tant que (buffer[i] et buffer[i] n'est pas \n)
+		i++
+	si buffer[i] est \n
+		i++
+	result = malloc((i + 1) * sizeof char)
+	si result null
+		return null
+	i = 0
+	tant que (buffer[i] et buffer[i] n'est pas \n)
+		result[i] = buffer[i]
+		i++
+	si (buffer[i] == \n)
+		result[i] = \n
+		i++
+	result[i] = \0
+	return result
+
+mise a jour de buffer 2 ( buffer) -> void
+	i = 0
+	tant que (buffer[i] et buffer[i] != \n)
+		i++
+	si buffer[i] == \0
+		free buffer
+		return
+	i++
+	i_start = i;
+	tant que buffer[i]
+		buffer[i - i_start] = buffer[i]
+		i++
+	buffer[i - i_start] = \0

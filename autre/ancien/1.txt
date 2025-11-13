@@ -1,0 +1,63 @@
+
+
+	si n_read = -1
+		free(result)
+		return null
+	result = join de result et buffer (result, buffer, position dans le buffer de \n + 1)
+	si result null
+		return null
+	si n_read = 0 ou si il y a un \n dans le buffer
+		rewind buffer (pointeur sur buffer, position dans le buffer de \n + 1)
+		return result
+	rewind buffer (pointeur sur buffer, position dans le buffer de \n + 1 = BUFFER_SIZE)
+
+
+update buffer (pointeur sur buffer, fd) -> void
+	si ! *buffer
+		new_buffer = calloc(1, 1)
+	sinon
+		new_buffer = calloc(len buffer + BUFFER_SIZE + 1, sizeof char)
+	n_read = read(fd, buffer + len du buffer, BUFFER_SIZE - len du buffer)
+
+
+char*	join de result et buffer (result, buffer, i_stop)
+	si le buffer est vide ie n_read = 0
+		return result
+			donc
+				si result null
+					return null
+				si result pas null et buffer vide
+					return le result pas null
+	result = une copie de result + buffer jusqu'a i_stop
+		si result NULL
+			c'est une copie de buffer jusqu'a i_stop
+	free ancien result
+	si erreur de malloc
+		return null
+
+rewind le buffer (pointeur sur buffer, i_start)
+	i = i_start
+	tant que (i < BUFFER_SIZE)
+	{
+		buffer[i - i_start] = buffer[i];
+		i++;
+	}
+	buffer[i - i_start] = \0
+
+position dans le buffer de \n + 1
+	i = 0
+	tant que i < BUFFER_SIZE
+		si buffer[i] == \n
+			return i
+	return i
+
+
+buffer \0 \0 \0 \0 \0
+result null
+read -> a b c d \0
+
+
+result -> a b c d \0
+read -> e \n f g \0
+result -> a b c d e \n
+rewind -> f g \0 \0 \0

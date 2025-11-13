@@ -1,0 +1,141 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    sauv.txt                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: qhauuy <qhauuy@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/11/07 13:14:49 by qhauuy            #+#    #+#              #
+#    Updated: 2023/11/19 15:47:17 by qhauuy           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+#include "get_next_line.h"
+
+int	ft_update_buffer(char *buffer, int fd)
+{
+	char	*src;
+	size_t	i;
+
+	src = buffer;
+	while (src != buffer + BUFFER_SIZE && *src == '\0')
+		src++;
+	i = 0;
+	while (src != buffer + BUFFER_SIZE)
+	{
+		buffer[i++] = *src;
+		src++;
+	}
+	return (read(fd, buffer + i, BUFFER_SIZE - i));
+}
+
+size_t	h(char *buffer)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < BUFFER_SIZE && buffer[i] && buffer[i] != '\n')
+		i++;
+	if (buffer[i] != '\n')
+		i++;
+	return (i);
+}
+
+int	g(char *buffer, char **result, int fd)
+{
+	char	*new_result;
+	size_t	i;
+	size_t	j;
+
+	new_result = malloc(sizeof(char) * (ft_strlen(*result) + h(buffer) + 1));
+	i = ft_strcpy(new_result, *result);
+	free(*result);
+	*result = new_result;
+	j = 0;
+	while (j < BUFFER_SIZE && buffer[j] && buffer[j] != '\n')
+	{
+		(*result)[i++] = buffer[j];
+		buffer[j++] = '\0';
+	}
+	if (buffer[j] == '\n')
+	{
+		(*result)[i++] = '\n';
+		buffer[j] = '\0';
+	}
+	(*result)[i] = '\0';
+	if (ft_update_buffer(buffer, fd) < 0)
+		return (1);
+	if ((*result)[ft_strlen(*result) - 1] != '\n')
+		return (g(buffer, result, fd));
+	return (0);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[BUFFER_SIZE];
+	char		*result;
+
+	if (fd < 0)
+		return (NULL);
+	ft_memset(buffer, '\0', BUFFER_SIZE);
+	if (ft_update_buffer(buffer, fd) < 1)
+		return (NULL);
+	result = malloc(sizeof(char));
+	*result = '\0';
+	if (g(buffer, &result, fd))
+		return (NULL);
+	return (result);
+}
+
+
+
+#include <stdio.h>
+#include <fcntl.h>
+int main()
+{
+	int fd = open("../f", O_RDONLY);
+	char *s = get_next_line(fd);
+	printf("<%s>\n", s);
+	free(s);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+size_t	ft_strcpy(char *dst, const char *src)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i])
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	return (i);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+

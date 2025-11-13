@@ -1,0 +1,21 @@
+g(char *buffer, int fd)
+	decaler le contenu du buffer au début du buffer
+	remplir le buffer de la suite du fichier
+
+renvoie 1 si ok 0 sinon
+int f(char *buffer, char **result)
+	concatener *result avec le buffer ie transferer le contenu du buffer jusqua un \n ou la fin du buffer dans une nouvelle chaine malloc pour *result. cette nouvelle chaine sera la concatenation de *result et de ce quon a transferer du buffer.
+	liberer lancien *result
+	g(buffer) = mettre a jour le buffer
+	si buffer[0] est \0 on return 1
+	si *result ne se termine pas par \n
+		return f(buffer, &result)
+	return 1
+
+char	*get_next_line(int fd)
+	char static *buffer initialisé avec des \0
+	char *result initialisé avec un malloc vide
+
+	g(buffer, fd) = mettre a jour le buffer
+	si buffer[0] est \0 on return null
+	f(buffer, &result)

@@ -1,0 +1,67 @@
+remettre le buffer au debut et remplir du fichier
+renvoie 1 si erreur
+int	ft_update_buffer(char *buffer, int fd)
+{
+	char	*src;
+	size_t	i;
+
+	src = buffer;
+	while (*src == '\0')
+		src++;
+	i = 0;
+	while (src != buffer + BUFFER_SIZE)
+	{
+		buffer[i++] = *src;
+		src++;
+	}
+	if (read(fd, buffer + i, BUFFER_SIZE - i) == -1)
+		return (1);
+	return (0);
+}
+
+h(buffer) -> taille de lajout au result
+
+concatener *result avec le buffer ie transferer le contenu du buffer jusqua un \n ou la fin du buffer dans une nouvelle chaine malloc pour *result. cette nouvelle chaine sera la concatenation de *result et de ce quon a transferer du buffer.
+renvoie 1 si erreur
+int	g(char *buffer, char **result, int fd)
+{
+	char	*new_result;
+	size_t	i;
+	size_t	j;
+
+	new_result = malloc(sizeof(char) * (ft_strlen(*result) + h(buffer) + 1));
+	i = ft_strcpy(new_result, *result);
+	j = 0;
+	while (buffer[j] && buffer[j] != '\n')
+	{
+		new_result[i++] = buffer[j];
+		buffer[j++] = '\0';
+	}
+	if (buffer[j] == '\n')
+	{
+		new_result[i++] = '\n';
+		new_result[i] = '\0';
+		buffer[j] == '\0';
+	}
+	free(*result);
+	*result = new_result;
+	if (ft_update_buffer(buffer, fd))
+		return (1);
+	if *result ne se termine pas par \n
+		return (g(buffer, result, fd));
+	return (0);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[BUFFER_SIZE];
+	char *result;
+
+	if (fd < 0)
+		return (NULL);
+	ft_memset(buffer, '\0', BUFFER_SIZE);
+	result = NULL;
+	if (ft_update_buffer(buffer, fd) || *buffer == '\0' || g(buffer, &result, fd))
+		return (NULL);
+	return (result);
+}

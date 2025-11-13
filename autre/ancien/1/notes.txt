@@ -1,0 +1,25 @@
+fichier :
+asseirlsdfjsldkfjhs
+fjofaishdbfosjhfboasjdhf
+asdoifuhsifuh
+
+buffer -> a s s e pam
+
+result NULL
+
+new_result result +  4 + 1 libres
+
+j = 0
+
+
+
+
+fichier
+abcdefg
+ijk
+
+buffer \0 \0 \0 \0 pam
+buffer a b c d pam
+result a b c d pam
+
+

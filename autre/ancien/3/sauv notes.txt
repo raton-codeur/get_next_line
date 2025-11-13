@@ -1,0 +1,45 @@
+fill buffer (buffer, fd, i) ie remplir le buffer a partir de son indice i avec le fd
+	return (read(fd, buffer + i, BUFFER_SIZE - i));
+
+update buffer (buffer, fd) ie se placer a la fin du buffer et remplir le buffer
+	i 0
+
+	tant que buffer[i] n'est pas \0
+		i++
+	return fill buffer (buffer, fd, i)
+
+
+pos stop (buffer)
+	i = 0
+	while (i < BUFFER_SIZE && buffer[i] != '\n' && buffer[i])
+		i++
+	if (buffer[i] == '\n')
+		i++
+	return i
+
+update de result (char **result, buffer, i_stop)
+	nouvelle valeur de *result : join entre *result et buffer jusqu'a i exclus
+	renvoie 1 si erreur, 0 si ok
+
+memset + '\0' (buffer, buffer + i)
+	replacer buffer + i au debut du buffer
+	mettre un \0 dans la case suivant le contenu du buffer sauvé
+
+g (buffer, fd, char **result)
+	update buffer
+	si buffer vide
+		return 0 ie ok
+	i_stop = pos stop (buffer)
+	if (update de *result (result, buffer, i_stop))
+		return NULL
+	memset + '\0' (buffer, buffer + i)
+	return (g());
+
+
+get next line (fd)
+	static buffer[BUFFER_SIZE]
+
+	init buffer avec des \0
+	result = NULL
+	g(buffer, fd, &result)
+	return result

@@ -1,0 +1,143 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    sauv.txt                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: qhauuy <qhauuy@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/11/20 12:10:25 by qhauuy            #+#    #+#              #
+#    Updated: 2023/11/22 15:50:08 by qhauuy           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+#include "get_next_line.h"
+
+
+void	ft_analyse_buffer(char *buffer, int i_start, int *i_stop, int *stop);
+int	ft_update_result(char **result, char *buffer, int i_stop);
+void	ft_rewind_buffer(char *buffer, int i_stop);
+size_t	ft_strlen(const char *s);
+void	ft_rewind_buffer(char *buffer, int i_start);
+
+
+
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[BUFFER_SIZE] = {0};
+	char		*result;
+	int			i_start;
+	int			i_stop;
+	int			stop;
+
+	if (fd < 0)
+		return (NULL);
+	result = NULL;
+	i_stop = BUFFER_SIZE;
+	stop = 0;
+	while (stop == 0)
+	{
+		i_start = ft_strlen(buffer);
+		i_stop = i_start + read(fd, buffer + i_start, BUFFER_SIZE - i_start);
+		if (i_stop - i_start == 0 && result == NULL)
+			return (NULL);
+		if (i_stop - i_start == -1)
+		{
+			free(result);
+			return (NULL);
+		}
+		ft_analyse_buffer(buffer, i_start, &i_stop, &stop);
+		if (ft_update_result(&result, buffer, i_stop))
+		{
+			free(result);
+			return (NULL);
+		}
+		ft_rewind_buffer(buffer, i_stop);
+	}
+	return (result);
+}
+
+/*
+rien lu ie istop - istart == 0 et que result null -> return null
+erreur de lecture ie istop - istart == -1 -> free result et reutnr null
+
+i_stop n'est pas a buffersize
+	stop = 1
+si il y a un \n depuis istart jusau'a istop
+	stop = 1
+	i_stop = position du \n + 1
+
+
+*/
+
+void	ft_analyse_buffer(char *buffer, int i_start, int *i_stop, int *stop)
+{
+	int	i;
+
+	if (*i_stop != BUFFER_SIZE)
+		*stop = 1;
+	i = i_start;
+	while (i < *i_stop)
+	{
+		if (buffer[i] == '\n')
+		{
+			*stop = 1;
+			*i_stop = i + 1;
+			return ;
+		}
+		i++;
+	}
+}
+
+int	ft_update_result(char **result, char *buffer, int i_stop)
+{
+	int		len_result;
+	char	*new_result;
+	int		i;
+
+	len_result = ft_strlen(*result);
+	new_result = malloc(sizeof(char) * (len_result + i_stop + 1));
+	if (new_result == NULL)
+		return (1);
+	i = 0;
+	while (*result && (*result)[i])
+	{
+		new_result[i] = (*result)[i];
+		i++;
+	}
+	while (i - len_result < i_stop)
+	{
+		new_result[i] = buffer[i - len_result];
+		i++;
+	}
+	new_result[i] = '\0';
+	if (result != NULL)
+		free(*result);
+	*result = new_result;
+	return (0);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	if (s == NULL)
+		return (0);
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+void	ft_rewind_buffer(char *buffer, int i_start)
+{
+	int	i_start_save;
+
+	i_start_save = i_start;
+	while (i_start < BUFFER_SIZE)
+	{
+		buffer[i_start - i_start_save] = buffer[i_start];
+		i_start++;
+	}
+	buffer[i_start - i_start_save] = '\0';
+}
